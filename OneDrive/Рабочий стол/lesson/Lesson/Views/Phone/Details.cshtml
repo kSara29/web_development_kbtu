@@ -1,0 +1,39 @@
+@model Lesson.ViewModels.PhoneDetailsVm
+
+@{
+    ViewBag.Title = "Детали";
+    Layout = "_Layout";
+}
+
+<div class="card" style="width: 18rem;">
+    <img src="@Model.Image" class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Brand @Model.Title</h5>
+        <p class="card-text">@Model.Description</p>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">@Model.Price $</li>
+        <li class="list-group-item">@Model.BatteryCapacity мАч</li>
+        <li class="list-group-item">@Model.DisplayType</li>
+        
+        @foreach (var cur in Model.Currency)
+        {
+            <li class="list-group-item">@((decimal)cur.CurrencyRate * Model.Price) @cur.CurrencyName</li>
+        }
+
+    </ul>
+    <div class="card-body">
+        <a asp-controller="Order"
+                   asp-action="Checkout"
+                   asp-route-phoneId="@Model.Id"
+                   class="btn btn-success btn-outline-light">Купить</a>
+        
+                <a asp-action="Delete" asp-route-phoneId="@Model.Id"
+                   class="btn btn-danger">Удалить</a>
+        
+                <a asp-action="Edit" asp-route-Id="@Model.Id"
+                   class="btn btn-warning">Редактировать</a>
+        
+                <a asp-action="Index" class="btn btn-info">Вернуться</a>
+    </div>
+</div>
