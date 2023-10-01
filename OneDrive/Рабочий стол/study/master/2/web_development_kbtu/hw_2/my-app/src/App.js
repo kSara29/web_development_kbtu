@@ -1,25 +1,61 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect, Component } from 'react';
 
-function App() {
+function withButtonState(Component) {
+  return function WrappedComponent(props) {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+      document.title = `Clicked ${count} times`;
+
+      return () => {
+        document.title = 'React App';
+      };
+    }, [count]);
+
+    function handleClick() {
+      setCount(count + 1);
+    }
+
+    return <Component count={count} onClick={handleClick} {...props} />;
+  };
+}
+
+function MyButton({ count, onClick }) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <button onClick={onClick}>
+      Clicked {count} times
+    </button>
   );
 }
 
-export default App;
+const ButtonWithState = withButtonState(MyButton);
+
+class LifecycleComponent extends Component {
+  componentDidMount() {
+    console.log('LifecycleComponent mounted');
+  }
+
+  componentWillUnmount() {
+    console.log('LifecycleComponent will unmount');
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Lifecycle Component</h2>
+        <p>This component uses lifecycle methods</p>
+      </div>
+    );
+  }
+}
+
+export default function MyApp() {
+  return (
+    <div>
+      <h1>Usage hook</h1>
+      <ButtonWithState />
+      <ButtonWithState />
+      <LifecycleComponent />
+    </div>
+  );
+}
