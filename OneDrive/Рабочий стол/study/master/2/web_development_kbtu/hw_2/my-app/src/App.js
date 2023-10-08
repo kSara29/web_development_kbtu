@@ -1,61 +1,40 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, { useState, useMemo } from 'react';
 
-function withButtonState(Component) {
-  return function WrappedComponent(props) {
-    const [count, setCount] = useState(0);
+function ExpensiveComponent({ data }) {
+  return <div>Дорогостоящий компонент</div>;
+}
 
-    useEffect(() => {
-      document.title = `Clicked ${count} times`;
+const MemoizedExpensiveComponent = React.memo(ExpensiveComponent);
 
-      return () => {
-        document.title = 'React App';
-      };
-    }, [count]);
+function App() {
+  const [count, setCount] = useState(0);
+  const [data, setData] = useState(5);
 
-    function handleClick() {
-      setCount(count + 1);
-    }
-
-    return <Component count={count} onClick={handleClick} {...props} />;
+  const handleIncrement = () => {
+    setCount(count + 1);
   };
-}
 
-function MyButton({ count, onClick }) {
-  return (
-    <button onClick={onClick}>
-      Clicked {count} times
-    </button>
-  );
-}
+  const handleDataChange = () => {
+    setData(data + 1);
+  };
 
-const ButtonWithState = withButtonState(MyButton);
+  const result = useMemo(() => {
+    return data * 2;
+  }, [data]);
 
-class LifecycleComponent extends Component {
-  componentDidMount() {
-    console.log('LifecycleComponent mounted');
-  }
-
-  componentWillUnmount() {
-    console.log('LifecycleComponent will unmount');
-  }
-
-  render() {
-    return (
-      <div>
-        <h2>Lifecycle Component</h2>
-        <p>This component uses lifecycle methods</p>
-      </div>
-    );
-  }
-}
-
-export default function MyApp() {
   return (
     <div>
-      <h1>Usage hook</h1>
-      <ButtonWithState />
-      <ButtonWithState />
-      <LifecycleComponent />
+      <p>Использование  Event handlers </p>
+      <p>Счетчик: {count}</p>
+        <button onClick={handleIncrement}>Увеличить</button>
+      <br/>
+      <br/>
+      <p>Использование  Memoization  </p>
+      <button onClick={handleDataChange}>Изменить данные</button>
+      <MemoizedExpensiveComponent data={data} />
+      <div>Результат вычисления: {result}</div>
     </div>
   );
 }
+
+export default App;
